@@ -1,5 +1,5 @@
 {
-  "name": "code-explainer",
+  "name": "component-download-button",
   "private": true,
   "dependencies": {
     "polymer": "Polymer/polymer#master",
