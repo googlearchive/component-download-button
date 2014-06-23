@@ -1,0 +1,15 @@
+{
+  "name": "code-explainer",
+  "private": true,
+  "dependencies": {
+    "polymer": "Polymer/polymer#master",
+    "core-icon": "Polymer/core-icon.html",
+    "core-icons": "Polymer/iconsets/icons.html",
+    "core-overlay": "Polymer/core-overlay.html",
+    "core-selector": "Polymer/core-selector.html",
+    "paper-button": "Polymer/paper-button.html",
+    "paper-tabs": "Polymer/paper-tabs.html",
+    "paper-shadow": "Polymer/paper-shadow.html"
+  }
+}
+

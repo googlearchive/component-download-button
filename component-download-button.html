@@ -1,0 +1,226 @@
+<!--
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-icon/core-icon.html">
+<link rel="import" href="../core-icons/iconsets/icons.html">
+<link rel="import" href="../core-overlay/core-overlay.html">
+<link rel="import" href="../core-selector/core-selector.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-tabs/paper-tabs.html">
+<link rel="import" href="../paper-shadow/paper-shadow.html">
+
+<!--
+The `component-download-button` element presents a tabbed UI in an overlay 
+when tapped, providing instructions for downloaing a Web Component.  
+
+The UI provides instructions for downloading via a ZIP file (via the 
+<em>bowerarchiver.appspot.com</em> web service), Bower, and Github. 
+The component remembers the tab the user last selected (via a global localStorage 
+property) so as to present the user's preferred download method on subsequent
+uses of any instance of this component.
+
+If the component is not hosted under the `Polymer` github org, specify
+a different org using the `org` attribute.
+
+Example:
+
+    <component-download-button component="core-ajax"></component-download-button>
+
+    <component-download-button org="PolymerLabs" component="google-map">
+    </component-download-button>
+ 
+@element component-download-button
+@status beta
+@homepage github.io
+-->
+<polymer-element name="component-download-button" attributes="label open component org">
+
+<template>
+
+  <style>
+
+    :host {
+      padding: 10px;
+    }
+
+    #overlay {
+      padding: 0 10px 10px 10px;
+      width: 700px;
+    }
+
+    .card {
+      background: #dfdfdf;
+      border-radius: 2px;
+    }
+
+    paper-tab {
+      background: #bbb;
+    }
+
+    .icon {
+      margin-right: 10px;
+    }
+
+    .cta {
+      background-color: green;
+      color: white;
+      fill: white;
+    }
+
+    code {
+      border: 1px solid gray;
+      border-radius: 3px;
+      background: #bbb;
+      font-size: 0.8em;
+      padding: 3px;
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+
+    code.block {
+      display: block;
+      padding: 5px 10px;
+      background: green;
+      color: white;
+    }
+
+    .note {
+      font-style: italic;
+      font-size: 0.8em;
+      line-height: normal;
+    }
+
+    .important {
+      color: red;
+    }
+
+    core-selector > section {
+      display: none;
+      padding: 10px;
+    }
+
+    core-selector > section.core-selected {
+      display: block;
+    }
+
+    .close {
+      background: #bbb;
+    }
+
+    paper-shadow {
+      pointer-events: none;
+    }
+
+  </style>
+
+  <paper-button raisedButton icon="file-download" label="{{label}}" on-tap="{{toggle}}"></paper-button>
+  <core-overlay id="overlay" backdrop transition="core-transition-center" opened="{{open}}">
+    <div class="card" layout vertical>
+      <paper-shadow z="2"></paper-shadow>
+      <paper-tabs selected="{{selected}}">
+        <paper-tab><core-icon class="icon" icon="attachment"></core-icon>ZIP</paper-tab>
+        <paper-tab><core-icon class="icon" src="icons/bower.png"></core-icon>Bower</paper-tab>
+        <paper-tab><core-icon class="icon" src="icons/github.png"></core-icon>Github</paper-tab>
+      </paper-tabs>
+      <core-selector selected="{{selected}}">
+        <section>
+          <paper-button class="cta" raisedButton icon="file-download" on-tap="{{downloadZIP}}">Download ZIP</paper-button>
+          <ol>
+            <li>Unzip ZIP file to your project root (merge with any existing components folder)</li>
+            <li>Add <code>&lt;link rel="import" href="components/{{component}}/{{component}}.html"&gt;</code> to your HTML file.</li>
+          </ol>
+          <div class="note">Note: The ZIP file contains all dependencies for this compoent and is a great way to get started, since ZIP files are easy to work with and require no tools.  For the ability to update to newer versions of components and resolve dependencies, we recommend using Bower for actual projects.  Click on the Bower tab, and see our <a href="#">getting started with Bower</a> article to get started using Polymer with Bower.</div>
+        </section>
+        <section>
+          <code class="block">bower install {{org}}/{{component}}</code>
+          <ol>
+            <li>Run the command above from your project root</li>
+            <li>Add <code>&lt;link rel="import" href="components/{{component}}/{{component}}.html"&gt;</code> to your HTML file.</li>
+          </ol>
+          <div class="note">For details on getting set up using Bower with Polymer, see our <a href="#">getting started with Bower</a> article.</div>
+        </section>
+        <section>
+          <code class="block">git clone https://github.com/{{org}}/{{component}}.git components/{{component}}</code>
+          <ol>
+            <li>Run the command above from your project root</li>
+            <li><span class="important">Important:</span> Verify and retrieve any dependencies component may require</li>
+            <li>Add <code>&lt;link rel="import" href="components/{{component}}/{{component}}.html"&gt;</code> to your HTML file.</li>
+          </ol>
+          <div class="note">Note: The link to the git repo above contains only the source code for this component, but not any other components it may depend on.  Retrieving the source via git is generally only useful for developers intending to contribute code changes.  For most users, we recommend using Bower, which has a better workflow for consuming components and their dependencies.</div>
+        </section>
+      </core-selector>
+      <paper-button class="close" raisedButton label="Close" on-tap="{{toggle}}"></paper-button>
+    </div>
+  </core-overlay>
+
+</template>
+
+<script>
+
+  Polymer({
+
+    selected: 0,
+
+    /**
+     * Reflects whether the overlay is open or not.  Set to `true` to manually open.
+     * @attribute open
+     * @default false
+     * @type Boolean
+     */
+    open: false,
+
+    /**
+     * The name of the component in Github/Bower (required).
+     * @attribute component
+     * @type String
+     */
+    component: null,
+
+    /**
+     * Optional: Label for the button (defaults to 'Get the Source').
+     * @attribute component
+     * @default 'Get the Source'
+     * @type String
+     */
+    label: "Get the Source",
+
+    /**
+     * Optional: Github org (defaults to 'Polymer').
+     * @attribute component
+     * @default 'Get the Source'
+     * @type String
+     */
+    org: "Polymer",
+
+    ready: function() {
+      var s = parseInt(localStorage.getItem('polymer-download-pref'));
+      if (s == null || isNaN(s) || s < 0 || s > 2) {
+        s = 0;
+      }
+      this.selected = s;
+    },
+
+    selectedChanged: function() {
+      localStorage.setItem('polymer-download-pref', this.selected);
+    },
+
+    toggle: function() {
+      this.open = !this.open;
+    },
+
+    downloadZIP: function() {
+      window.location = 'https://bowerarchiver.appspot.com/archive?' + this.component + "=" + this.org + "/" + this.component;
+    }
+
+  });
+
+</script>
+</polymer-element>
