@@ -1,0 +1,220 @@
+<!--
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../core-icons/core-icons.html">
+<link rel="import" href="../core-selector/core-selector.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-tabs/paper-tabs.html">
+
+<!--
+The `component-download-view` element presents a tabbed UI, 
+providing instructions for downloaing a Web Component.  
+
+The UI provides instructions for downloading via a ZIP file (via the 
+<em>bowerarchiver.appspot.com</em> web service), Bower, and Github. 
+The component remembers the tab the user last selected (via a global localStorage 
+property) so as to present the user's preferred download method on subsequent
+uses of any instance of this component.
+
+If the component is not hosted under the `Polymer` github org, specify
+a different org using the `org` attribute.
+
+Example:
+
+    <component-download-view component="core-ajax"></component-download-view>
+
+    <component-download-view org="PolymerLabs" component="google-map">
+    </component-download-view>
+ 
+@element component-download-view
+@status beta
+@homepage github.io
+-->
+<polymer-element name="component-download-view" attributes="component org">
+<template>
+
+  <style>
+
+    :host {
+      display: block;
+      background-color: #f1f1f1;
+    }
+
+    #tabs {
+      background-color: #ffffff;
+    }
+    
+    paper-tabs {
+      width: 350px;
+      color: #4555a5;
+      fill: currentcolor;
+      text-transform: uppercase;
+    }
+    paper-tabs::shadow #selectionBar {
+      background-color: currentcolor;
+    }
+    paper-tab::shadow #ink {
+      color: currentcolor;
+    }
+    
+    .icon {
+      margin-right: 10px;
+    }
+
+    .cta {
+      background-color: #0f9d58;
+      color: white;
+      fill: white;
+    }
+
+    code {
+      border-radius: 3px;
+      background: #cccccc;
+      font-size: 0.8em;
+      padding: 6px;
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+
+    code.block {
+      display: block;
+      padding: 8px 10px;
+      background: #0f9d58;
+      color: white;
+    }
+
+    .note {
+      font-style: italic;
+      font-size: 0.8em;
+      line-height: normal;
+    }
+
+    .important {
+      color: red;
+    }
+
+    core-selector {
+      display: block;
+    }
+    
+    section {
+      display: none;
+      padding: 24px;
+      line-height: 2em;
+    }
+
+    section.core-selected {
+      display: block;
+    }
+    
+    ol {
+      margin-left: -1em;
+    }
+
+  </style>
+
+  <div id="tabs">
+    <paper-tabs selected="{{selected}}">
+      <paper-tab>ZIP</paper-tab>
+      <paper-tab>Bower</paper-tab>
+      <paper-tab>Github</paper-tab>
+    </paper-tabs>
+  </div>
+  
+  <core-selector selected="{{selected}}">
+  
+    <section>
+      <paper-button class="cta" icon="file-download" on-tap="{{downloadZIP}}">Download ZIP&nbsp;&nbsp;</paper-button>
+      <ol>
+        <li>Unzip ZIP file to your project root (merge with any existing components folder)</li>
+        <li>Import the component by adding this to your HTML file:<br>
+          <code>&lt;link rel="import" href="components/{{component}}/{{component}}.html"&gt;</code>
+        </li>
+      </ol>
+      <div class="note">
+        Note: The ZIP file contains all dependencies for this component and is 
+        a great way to get started. For easier management and version control, 
+        we recommend using <a href="#">Bower</a> instead.
+      </div>
+    </section>
+    
+    <section>
+      <code class="block">bower install {{org}}/{{component}}</code>
+      <ol>
+        <li>Run the command above from your project root</li>
+        <li>Import the component by adding this to your HTML file:<br>
+          <code>&lt;link rel="import" href="components/{{component}}/{{component}}.html"&gt;</code>
+        </li>
+      </ol>
+      <div class="note">
+        For details on getting set up using Bower with Polymer, see our 
+        <a href="#">getting started with Bower</a> article.
+      </div>
+    </section>
+    
+    <section>
+      <code class="block">git clone https://github.com/{{org}}/{{component}}.git components/{{component}}</code>
+      <ol>
+        <li>Run the command above from your project root</li>
+        <li>Import the component by adding this to your HTML file:<br>
+          <code>&lt;link rel="import" href="components/{{component}}/{{component}}.html"&gt;</code>
+        </li>
+      </ol>
+      <div class="note">
+        Note: GIT repositories do not contain source code for component
+        dependencies. For most users, we 
+        recommend using Zip or Bower, which have better workflow for consuming 
+        components and their dependencies.
+      </div>
+    </section>
+    
+  </core-selector>
+
+</template>
+<script>
+
+  Polymer({
+    selected: 0,
+
+    /**
+     * The name of the component in Github/Bower (required).
+     * @attribute component
+     * @type String
+     */
+    component: null,
+
+    /**
+     * Optional: Github org (defaults to 'Polymer').
+     * @attribute org
+     * @default 'Get the Source'
+     * @type String
+     */
+    org: "Polymer",
+
+    ready: function() {
+      var s = parseInt(localStorage.getItem('polymer-download-pref'));
+      if (s == null || isNaN(s) || s < 0 || s > 2) {
+        s = 0;
+      }
+      this.selected = s;
+    },
+
+    selectedChanged: function() {
+      localStorage.setItem('polymer-download-pref', this.selected);
+    },
+
+    downloadZIP: function() {
+      window.location = 'https://bowerarchiver.appspot.com/archive?' + this.component + "=" + this.org + "/" + this.component;
+    }
+
+  });
+
+</script>
+</polymer-element>
