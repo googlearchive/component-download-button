@@ -70,7 +70,7 @@ Example:
       pointer-events: none;
     }
     
-    core-toolbar > span[flex] {
+    core-toolbar > div[flex] {
       margin-left: 16px;
     }
   </style>
@@ -79,7 +79,7 @@ Example:
   <core-overlay id="overlay" backdrop transition="core-transition-center" opened="{{open}}">
     <div class="card" layout vertical>
       <core-toolbar>
-        <span flex>Download</span>
+        <div flex>Download</div>
         <core-icon-button icon="close" on-tap="{{toggle}}"></core-icon-button>
       </core-toolbar>
       <paper-shadow z="2"></paper-shadow>
