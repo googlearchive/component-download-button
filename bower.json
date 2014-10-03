@@ -7,9 +7,10 @@
     "core-icons": "Polymer/core-icons#master",
     "core-overlay": "Polymer/core-overlay#master",
     "core-selector": "Polymer/core-selector#master",
+    "core-transition": "Polymer/core-transition",
     "paper-button": "Polymer/paper-button#master",
-    "paper-tabs": "Polymer/paper-tabs#master",
-    "paper-shadow": "Polymer/paper-shadow#master"
+    "paper-shadow": "Polymer/paper-shadow#master",
+    "paper-tabs": "Polymer/paper-tabs#master"
   }
 }
 
