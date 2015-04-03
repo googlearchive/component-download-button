@@ -38,7 +38,7 @@ Example:
 @status beta
 @homepage github.io
 -->
-<polymer-element name="component-download-button" attributes="label open component org">
+<polymer-element name="component-download-button" attributes="label open component org version">
 
 <template>
 
@@ -91,7 +91,7 @@ Example:
         <core-icon-button icon="close" on-tap="{{toggle}}"></core-icon-button>
       </core-toolbar>
       <paper-shadow z="2"></paper-shadow>
-      <component-download-view flex org="{{org}}" component="{{component}}"></component-download-view>
+      <component-download-view flex org="{{org}}" component="{{component}}" version="{{version}}"></component-download-view>
     </div>
   </core-overlay>
 
@@ -131,6 +131,14 @@ Example:
      * @type String
      */
     org: "Polymer",
+
+    /**
+     * Optional: Bower version to download.
+     * @attribute version
+     * @default '^0.5'
+     * @type String
+     */
+    version: "^0.5",
 
     toggle: function() {
       this.open = !this.open;
