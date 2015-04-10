@@ -143,7 +143,7 @@ Example:
   <core-selector selected="{{selected}}">
   
     <section>
-      <paper-button disabled class="cta" on-tap="{{downloadZIP}}">
+      <paper-button class="cta" on-tap="{{downloadZIP}}">
         <core-icon icon="file-download"></core-icon>
         <span class="label">Download ZIP</span>
       </paper-button>
@@ -154,13 +154,10 @@ Example:
         </li>
       </ol>
       <div class="note">
-        <strong>ZIP file download is temporarily unavailable.</strong>
-        <!--
         <strong>Quick start</strong>. The ZIP file contains all dependencies for this component and is 
         a great way to get started. For easier management and version control, 
         we recommend using 
         <a href="http://polymer-project.org/docs/start/getting-the-code.html#using-bower">Bower</a> instead.
-        -->
       </div>
     </section>
     
@@ -236,7 +233,8 @@ Example:
     },
 
     downloadZIP: function() {
-      window.location = 'https://bowerarchiver.appspot.com/archive?' + this.component + "=" + this.org + "/" + this.component;
+      window.location = 'https://bowerarchiver.appspot.com/archive?' + this.component + "=" + this.org + 
+          "/" + this.component + "%23" + this.version;
     }
 
   });
